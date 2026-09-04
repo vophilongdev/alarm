@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package yolo_encroach;
+
+// Điểm ROI. Chuẩn hoá 0..1 theo khung gốc, hoặc pixel nếu > 1.
+message Point {
+  float x = 1;
+  float y = 2;
+}
+
+// Request gửi ảnh đã resize và kích thước gốc.
+// roi do UI vẽ và gửi xuống; service không tự sinh ROI.
+message DetectRequest {
+  bytes image          = 1; // JPEG bytes
+  int32 resized_width  = 2;
+  int32 resized_height = 3;
+  int32 orig_width     = 4;
+  int32 orig_height    = 5;
+  repeated int32 allowed_classes = 6;
+
+  string stream_id     = 7; // uuid camera, dùng làm khoá tracker + stream_id của alarm
+  repeated Point roi   = 8; // polygon vùng cấm lấn chiếm
+}
+
+// Bounding box kèm độ tin cậy + class name + trạng thái lấn chiếm
+message BoundingBox {
+  int32 x1           = 1;
+  int32 y1           = 2;
+  int32 x2           = 3;
+  int32 y2           = 4;
+  float confidence   = 5;
+  string class_name  = 6;
+  int32 track_id     = 7;
+  bool in_roi        = 8; // tâm bbox nằm trong ROI
+  float dwell_seconds = 9; // thời gian liên tục trong ROI (wall-clock)
+}
+
+// Response trả list bbox + kết quả đánh giá lấn chiếm
+message DetectResponse {
+  repeated BoundingBox bboxes = 1;
+  bool alarm                  = 2; // có alarm vừa được bắn ở frame này
+  repeated int32 alarm_track_ids = 3;
+}
+
+service YoloService {
+  rpc DetectFrame (DetectRequest) returns (DetectResponse);
+}

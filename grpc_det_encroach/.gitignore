@@ -1,0 +1,62 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs & Temporary files
+*.log
+logs/
+
+# Secrets — SESSION_KEY dùng cho api-dev.tado.vn
+.env
+.env.*
+!.env.example
+
+# TensorRT engines / generated artifacts
+*.engine
+*.plan
+models/
+app/models/yolo/trt/*
+!app/models/yolo/trt/.gitkeep
+
+# Explicitly keep PyTorch and ONNX models
+!*.pt
+!*.onnx

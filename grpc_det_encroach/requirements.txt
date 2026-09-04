@@ -1,0 +1,1 @@
+# Đã chuyển sang base image core-ai-base:cu121-trt10 — dependencies chuẩn tại _shared/requirements.base.txt
