@@ -86,7 +86,7 @@ class EncroachTracker:
         self._lock = threading.Lock()
 
     def _match(self, bbox, used: set):
-        """Ghép detection với track cũ bằng IoU lớn nhất."""
+        """Ghép detection với track cũ bằng IoU lớn nhất, fallback qua khoảng cách tâm."""
         best_id, best_iou = None, 0.0
         for tid, tr in self._tracks.items():
             if tid in used:
@@ -94,7 +94,20 @@ class EncroachTracker:
             v = _iou(bbox, tr.bbox)
             if v > best_iou:
                 best_id, best_iou = tid, v
-        return best_id if best_iou >= settings.MATCH_IOU_THRESHOLD else None
+        if best_iou >= settings.MATCH_IOU_THRESHOLD:
+            return best_id
+
+        # Fallback: Ghép theo khoảng cách tâm (phù hợp với xe/vật thể đỗ cố định lấn chiếm)
+        cx1, cy1 = (bbox[0] + bbox[2]) / 2.0, (bbox[1] + bbox[3]) / 2.0
+        best_dist = 999999.0
+        for tid, tr in self._tracks.items():
+            if tid in used:
+                continue
+            tcx, tcy = (tr.bbox[0] + tr.bbox[2]) / 2.0, (tr.bbox[1] + tr.bbox[3]) / 2.0
+            dist = ((cx1 - tcx) ** 2 + (cy1 - tcy) ** 2) ** 0.5
+            if dist < 120 and dist < best_dist:
+                best_id, best_dist = tid, dist
+        return best_id
 
     def update(self, detections, roi_contour, now: float = None):
         """

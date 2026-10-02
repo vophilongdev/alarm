@@ -1,7 +1,7 @@
 # Dockerfile — YOLO gRPC detector service (unified).
 # Build from the SERVICE directory root:
 #   docker build -t harbor.tado.vn/long_dev/grpc-det-encroach:v1.0.0 .
-FROM core-ai-base:cu121-trt10
+FROM harbor.tado.vn/core-ai-trafsec/base:cu121-trt10
 # prod: FROM harbor.tado.vn/core-ai-trafsec/base:cu121-trt10
 
 WORKDIR /app
@@ -10,7 +10,7 @@ COPY app/ /app/
 # Đóng gói ENV mặc định trực tiếp vào Image
 ENV GRPC_PORT=50060 \
     USE_TENSORRT=true \
-    CONF_THRESHOLD=0.1 \
+    CONF_THRESHOLD=0.2 \
     BATCH_SIZE=8 \
     BATCH_TIMEOUT_MS=10 \
     BASE_URL_API=https://api-dev.tado.vn \

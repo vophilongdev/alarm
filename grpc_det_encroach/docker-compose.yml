@@ -5,13 +5,14 @@ services:
     image: harbor.tado.vn/long_dev/grpc-det-encroach:v1.0.0
     container_name: grpc_det_encroach
     volumes:
+      - ./app:/app
       - ./models/encroach_trt:/app/models/yolo/trt
     ports:
       - "50060:50060"
     environment:
       GRPC_PORT: 50060
       USE_TENSORRT: ${USE_TENSORRT:-true}
-      CONF_THRESHOLD: ${CONF_THRESHOLD:-0.1}
+      CONF_THRESHOLD: ${CONF_THRESHOLD:-0.2}
       BATCH_SIZE: ${BATCH_SIZE:-8}
       BATCH_TIMEOUT_MS: ${BATCH_TIMEOUT_MS:-10}
       CLASS_NAMES: ${CLASS_NAMES:-}

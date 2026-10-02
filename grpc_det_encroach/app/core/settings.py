@@ -29,7 +29,7 @@ class Settings:
 
     # Inference
     USE_TENSORRT = os.getenv("USE_TENSORRT", "true").lower() in ("true", "1", "yes")
-    CONF_THRESHOLD = float(os.getenv("CONF_THRESHOLD", 0.35))
+    CONF_THRESHOLD = float(os.getenv("CONF_THRESHOLD", 0.2))
     EXPORT_DYNAMIC_BATCH = os.getenv("EXPORT_DYNAMIC_BATCH", "true").lower() in ("true", "1", "yes")
 
     # Classes — best.pt xuất từ dataset Lan_chiem3 (roboflow) với tên class placeholder
@@ -58,8 +58,8 @@ class Settings:
 
     # Tracker
     MATCH_IOU_THRESHOLD = float(os.getenv("MATCH_IOU_THRESHOLD", 0.25))
-    MAX_LOST_ROUNDS = int(os.getenv("MAX_LOST_ROUNDS", 10))
-    TRACK_TTL = float(os.getenv("TRACK_TTL", 30.0))
+    MAX_LOST_ROUNDS = int(os.getenv("MAX_LOST_ROUNDS", 60))
+    TRACK_TTL = float(os.getenv("TRACK_TTL", 60.0))
 
 
 settings = Settings()

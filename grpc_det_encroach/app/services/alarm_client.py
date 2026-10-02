@@ -116,6 +116,8 @@ def get_cameras() -> list:
             "storage_username": cam.get("storage_username"),
             "storage_password": cam.get("storage_password"),
             "storage_channel": cam.get("storage_channel"),
+            "use_sdk": cam.get("use_sdk", 0),
+            "manufacturer": cam.get("manufacturer") or "dahua",
         })
 
     logger.info("Tìm thấy %d camera cho service_type=%s", len(out), settings.SERVICE_TYPE)
