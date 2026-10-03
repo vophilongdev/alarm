@@ -7,7 +7,7 @@ import time
 import cv2
 
 from core.settings import settings
-from services.alarm_client import create_alarm
+from services.alarm_client import create_alarm, patch_camera
 from services.camera_registry import registry
 from services.encroach_tracker import get_tracker, parse_roi
 from services.yolo_model import detect_frame
@@ -113,6 +113,7 @@ class CameraWorkerThread(threading.Thread):
                     continue
 
                 logger.info("[%s] ✅ Đã kết nối SDK camera thành công: %s:%s", self.cam_id, storage_url, storage_port)
+                patch_camera(self.cam_id, 1)
                 last_frame_time = 0.0
 
                 while not self.stopped.is_set() and getattr(viewer, "is_playing", True):
@@ -161,6 +162,7 @@ class CameraWorkerThread(threading.Thread):
                     viewer.cleanup()
                 except Exception as e:
                     logger.error("[%s] Lỗi cleanup SDK: %s", self.cam_id, e)
+                patch_camera(self.cam_id, 0)
                 time.sleep(2)
 
             else:
@@ -177,6 +179,7 @@ class CameraWorkerThread(threading.Thread):
                     continue
 
                 logger.info("[%s] ✅ Đã kết nối RTSP camera thành công: %s", self.cam_id, rtsp_url)
+                patch_camera(self.cam_id, 1)
                 last_frame_time = 0.0
 
                 while not self.stopped.is_set():
@@ -222,6 +225,7 @@ class CameraWorkerThread(threading.Thread):
                         self.servicer.alarm_pool.submit(self.servicer._post_alarm, self.cam_id, tracks, evidence)
 
                 cap.release()
+                patch_camera(self.cam_id, 0)
                 time.sleep(2)
 
 

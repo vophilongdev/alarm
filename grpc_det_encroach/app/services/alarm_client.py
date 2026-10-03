@@ -160,3 +160,28 @@ def create_alarm(stream_id: str, attributes: dict = None, frame=None) -> dict:
     logger.info("STATUS-CREATE-ALARM: %s | stream=%s", resp.status_code, stream_id)
     resp.raise_for_status()
     return resp.json()
+
+
+def patch_camera(stream_id: str, online: int) -> bool:
+    """
+    Cập nhật trạng thái camera trên CMS (online = 1 hoặc 0).
+    Gọi PATCH /api/cameras/{stream_id} với {"online": online}
+    """
+    url = f"{settings.BASE_URL.rstrip('/')}/api/cameras/{stream_id}"
+    try:
+        with _LOCK:
+            resp = _session.patch(
+                url,
+                json={"online": online},
+                headers=_headers(),
+                verify=False,
+                timeout=(3.0, 5.0),
+            )
+        logger.info("STATUS-PATCH-CAMERA: %s | stream=%s | online=%d",
+                    resp.status_code, stream_id, online)
+        return resp.status_code == 200
+    except Exception as e:
+        logger.warning("Lỗi patch_camera (stream=%s, online=%d): %s",
+                       stream_id, online, e)
+        return False
+
