@@ -1,0 +1,41 @@
+# Chạy đơn lẻ service này: docker compose up -d --build
+services:
+  detector:
+    build: .
+    image: harbor.tado.vn/long_dev/grpc-det-weapon:v1.0.0
+    container_name: grpc_det_weapon
+    volumes:
+      - ./app:/app
+      - ./models/weapon_trt:/app/models/yolo/trt
+    ports:
+      - "${PORT_HOST:-50062}:${GRPC_PORT:-50061}"
+    environment:
+      GRPC_PORT: ${GRPC_PORT:-50061}
+      USE_TENSORRT: ${USE_TENSORRT:-true}
+      CONF_THRESHOLD: ${CONF_THRESHOLD:-0.3}
+      BATCH_SIZE: ${BATCH_SIZE:-8}
+      BATCH_TIMEOUT_MS: ${BATCH_TIMEOUT_MS:-10}
+      CLASS_NAMES: ${CLASS_NAMES:-}
+      PERSON_CLASS_IDS: ${PERSON_CLASS_IDS:-0}
+      WEAPON_CLASS_IDS: ${WEAPON_CLASS_IDS:-1,2,3,4,5,6}
+      DILATION_KERNEL_SIZE: ${DILATION_KERNEL_SIZE:-5}
+      MIN_OVERLAP_PIXELS: ${MIN_OVERLAP_PIXELS:-15}
+      MIN_OVERLAP_RATIO: ${MIN_OVERLAP_RATIO:-0.05}
+      # CMS — Lấy SESSION_KEY từ .env
+      BASE_URL_API: ${BASE_URL_API:-https://api-dev.tado.vn}
+      SESSION_KEY: ${SESSION_KEY:-}
+      # Cổng license: chỉ mở cho camera khởi tạo với service_type này + license_key
+      SERVICE_TYPE: ${SERVICE_TYPE:-weapon,weapon_detection}
+      POLL_INTERVAL: ${POLL_INTERVAL:-20}
+      ALARM_COOLDOWN: ${ALARM_COOLDOWN:-10}
+      ALARM_TYPE: ${ALARM_TYPE:-weapon}
+      ALARM_SOURCE: ${ALARM_SOURCE:-grpc_det_weapon}
+      JPEG_QUALITY: ${JPEG_QUALITY:-60}
+    gpus: all
+    restart: always
+    networks:
+      - grpc-net
+
+networks:
+  grpc-net:
+    driver: bridge

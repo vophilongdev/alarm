@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.engine
+*.onnx
+models/
+app/models/yolo/trt/*
+!app/models/yolo/trt/.gitkeep
+.git/

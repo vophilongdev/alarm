@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package yolo_weapon;
+
+// Request gửi ảnh đã resize và kích thước gốc.
+// Khác với encroach: KHÔNG cần ROI polygon — phát hiện vũ khí toàn khung hình.
+message DetectRequest {
+  bytes image          = 1; // JPEG bytes
+  int32 resized_width  = 2;
+  int32 resized_height = 3;
+  int32 orig_width     = 4;
+  int32 orig_height    = 5;
+  repeated int32 allowed_classes = 6;
+
+  string stream_id     = 7; // uuid camera
+}
+
+// Bounding box kèm thông tin vũ khí nhận diện (CHỈ trả về vũ khí, không trả người)
+message WeaponBox {
+  int32 x1           = 1;
+  int32 y1           = 2;
+  int32 x2           = 3;
+  int32 y2           = 4;
+  float confidence   = 5;
+  string class_name  = 6;
+  bool held_by_person = 7; // vũ khí đang được người cầm (mask overlap xác nhận)
+}
+
+// Response chỉ chứa danh sách vũ khí đã xác nhận
+message DetectResponse {
+  repeated WeaponBox weapons = 1;
+  bool alarm                 = 2; // có alarm vừa được bắn ở frame này
+}
+
+service YoloWeaponService {
+  rpc DetectFrame (DetectRequest) returns (DetectResponse);
+}
