@@ -13,3 +13,5 @@ __pycache__/
 .env.*
 !.env.example
 models/
+PHONG_VAN_ALARM_AI.md
+
